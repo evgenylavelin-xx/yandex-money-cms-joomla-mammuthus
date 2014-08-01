@@ -37,7 +37,7 @@ class yandex_money_language
 	var $PHPSHOP_ADMIN_CFG_YM_MC_EXPLAIN = "Оплата при помощи мобильного телефона через систему Яндекс.Деньги.";
 
 	var $PHPSHOP_ADMIN_CFG_YM_NV = "Оплата через WebMoney";
-	var $PHPSHOP_ADMIN_CFG_YM_NV_EXPLAIN = "Оплата электронной валютой WenMoney через систему Яндекс.Деньги."
+	var $PHPSHOP_ADMIN_CFG_YM_NV_EXPLAIN = "Оплата электронной валютой WenMoney через систему Яндекс.Деньги.";
 
 	var $PHPSHOP_YM_ORDER_STATUS_WAIT_SET = "Пользователь сделал заказ, но ещё не оплатил. Заказу присвоен статус &laquo;в обработке&raquo;.";
 	var $PHPSHOP_ADMIN_CFG_YM_WAIT_STATUS = "Статус готов к оплате";
