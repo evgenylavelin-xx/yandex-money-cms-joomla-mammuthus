@@ -24,20 +24,33 @@ class yandex_money_language
 	var $PHPSHOP_ADMIN_CFG_YM_SHOPPASSWORD = "Секретный пароль";
 	var $PHPSHOP_ADMIN_CFG_YM_SHOPPASSWORD_EXPLAIN = "Заполняется в технической анкете при подключении к системе <a href=https://start.money.yandex.ru/><u>Яндекс.Деньги</u></a>";
 
-	var $PHPSHOP_ADMIN_CFG_YM_PC = "Оплата Яндекс.Деньгами";
-	var $PHPSHOP_ADMIN_CFG_YM_PC_EXPLAIN = "Оплата электронной валютой Яндекс.Деньги через систему Яндекс.Деньги.";
+	var $PHPSHOP_ADMIN_CFG_YM_PC = "Кошелек Яндекс.Деньги";
+	var $PHPSHOP_ADMIN_CFG_YM_PC_EXPLAIN = "Оплата из кошелька в Яндекс.Деньгах.";
 
-	var $PHPSHOP_ADMIN_CFG_YM_AC = "Оплата Банковской картой";
-	var $PHPSHOP_ADMIN_CFG_YM_AC_EXPLAIN = "Оплата банковскими картами через систему Яндекс.Деньги.";
+	var $PHPSHOP_ADMIN_CFG_YM_AC = "Банковская карта";
+	var $PHPSHOP_ADMIN_CFG_YM_AC_EXPLAIN = "Оплата с произвольной банковской карты.";
 
-	var $PHPSHOP_ADMIN_CFG_YM_GP = "Оплата через Терминалы";
-	var $PHPSHOP_ADMIN_CFG_YM_GP_EXPLAIN = "Оплата наличными по коду платежа через систему Яндекс.Деньги. В терминалах и кассах партнеров.";
+	var $PHPSHOP_ADMIN_CFG_YM_GP = "Наличными через кассы и терминалы";
+	var $PHPSHOP_ADMIN_CFG_YM_GP_EXPLAIN = "Оплата наличными через кассы и терминалы.";
 
-	var $PHPSHOP_ADMIN_CFG_YM_MC = "Оплата при помощи мобильного телефона";
-	var $PHPSHOP_ADMIN_CFG_YM_MC_EXPLAIN = "Оплата при помощи мобильного телефона через систему Яндекс.Деньги.";
+	var $PHPSHOP_ADMIN_CFG_YM_MC = "Счет мобильного телефона";
+	var $PHPSHOP_ADMIN_CFG_YM_MC_EXPLAIN = "Платеж со счета мобильного телефона.";
 
-	var $PHPSHOP_ADMIN_CFG_YM_NV = "Оплата через WebMoney";
-	var $PHPSHOP_ADMIN_CFG_YM_NV_EXPLAIN = "Оплата электронной валютой WenMoney через систему Яндекс.Деньги.";
+	var $PHPSHOP_ADMIN_CFG_YM_WM = "Кошелек WebMoney";
+	var $PHPSHOP_ADMIN_CFG_YM_WM_EXPLAIN = "Оплата из кошелька в системе WebMoney.";
+	
+	var $PHPSHOP_ADMIN_CFG_YM_SB = "Сбербанк: оплата по SMS или Сбербанк Онлайн";
+	var $PHPSHOP_ADMIN_CFG_YM_SB_EXPLAIN = "Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн.";
+
+	var $PHPSHOP_ADMIN_CFG_YM_AB = "Альфа-Клик";
+	var $PHPSHOP_ADMIN_CFG_YM_AB_EXPLAIN = "Оплата через Альфа-Клик.";
+	
+	var $PHPSHOP_ADMIN_CFG_YM_MA = "MasterPass";
+	var $PHPSHOP_ADMIN_CFG_YM_MA_EXPLAIN = "Оплата через MasterPass.";
+	
+	var $PHPSHOP_ADMIN_CFG_YM_PB = "Интернет-банк Промсвязьбанка";
+	var $PHPSHOP_ADMIN_CFG_YM_PB_EXPLAIN = "Оплата через интернет-банк Промсвязьбанка.";
+		
 
 	var $PHPSHOP_YM_ORDER_STATUS_WAIT_SET = "Пользователь сделал заказ, но ещё не оплатил. Заказу присвоен статус &laquo;в обработке&raquo;.";
 	var $PHPSHOP_ADMIN_CFG_YM_WAIT_STATUS = "Статус готов к оплате";
@@ -75,7 +88,7 @@ class ps_yandex_money
 		global $db, $VM_LANG;
 		if(htmlspecialchars( $db->sf("payment_extrainfo")) == '' ) 
 		{
-			$db->record[$db->row]->payment_extrainfo = '<?
+			$db->record[$db->row]->payment_extrainfo = '<?php
 // подключение класс для оплаты системой Яндекс.Деньги
 
 require_once(CLASSPATH."payment/ps_yandex_money.php");
@@ -105,63 +118,83 @@ $customerNumber = $user->username;
 $paymentTypes = array();
 if ( intval(YM_AC) )
 {
-	$paymentTypes["AC"] = "Оплатить банковской картой";
+	$paymentTypes["AC"] = "Оплатить с произвольной банковской карты";
 }
 if ( intval(YM_PC) )
 {
-	$paymentTypes["PC"] = "Оплатить Яндекс.Деньгами";
+	$paymentTypes["PC"] = "Оплатить из кошелька в Яндекс.Деньгах";
 }
 if ( intval(YM_GP) )
 {
-	$paymentTypes["GP"] = "Оплатить по коду в терминале";
+	$paymentTypes["GP"] = "Оплатить наличными через кассы и терминалы";
 }
 if ( intval(YM_MC) )
 {
-	$paymentTypes["MC"] = "Оплатить c телефона";
+	$paymentTypes["MC"] = "Оплатить со счета мобильного телефона";
 }
-if ( intval(YM_NV) )
+if ( intval(YM_WM) )
 {
-	$paymentTypes["WM"] = "Оплатить при помощи WebMoney";
+	$paymentTypes["WM"] = "Оплатить из кошелька в системе WebMoney";
+}
+if ( intval(YM_AB) )
+{
+	$paymentTypes["AB"] = "Оплатить через Альфа-Клик";
+}
+if ( intval(YM_SB) )
+{
+	$paymentTypes["SB"] = "Оплатить через Сбербанк: оплата по SMS или Сбербанк Онлайн";
+}
+if ( intval(YM_PB) )
+{
+	$paymentTypes["PB"] = "Оплатить через интернет-банк Промсвязьбанка";
+}
+if ( intval(YM_MA) )
+{
+	$paymentTypes["MA"] = "Оплатить через MasterPass.";
 }
 ?>
 
 <style type="text/css">
-div.payments_methods img {border: none; width: 109px; height: 69px; margin: 0 0 0 0;}
+div.payments_methods img {border: none; width: 32px; height: 32px; margin: 0 0 0 0;}
 div.payments_methods button {
 	cursor:pointer;
 	display:inline;
-	height:69px;
-	width:109px;
-	line-height:69px;
+	height:32px;
+	width:32px;
+	line-height:32px;
 	text-align:center;
 	background-repeat:no-repeat;
 	border: none;
 	margin: 0 6px 0 6px;
 }
-div.payments_methods #btnAC {background-image:url(\'http://<? echo $host; ?>/images/yamoney/ym_card.png\')}
-div.payments_methods #btnPC {background-image:url(\'http://<? echo $host; ?>/images/yamoney/ym_yandex_money.png\')}
-div.payments_methods #btnGP {background-image:url(\'http://<? echo $host; ?>/images/yamoney/ym_terminal.png\')}
-div.payments_methods #btnMC {background-image:url(\'http://<? echo $host; ?>/images/yamoney/ym_mobile.png\')}
-div.payments_methods #btnNV {background-image:url(\'http://<? echo $host; ?>/images/yamoney/ym_webmoney.png\')}
+div.payments_methods #btnAC {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/ac.png\')}
+div.payments_methods #btnPC {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/pc.png\')}
+div.payments_methods #btnGP {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/gp.png\')}
+div.payments_methods #btnMC {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/mc.png\')}
+div.payments_methods #btnWM {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/wm.png\')}
+div.payments_methods #btnAB {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/ab.png\')}
+div.payments_methods #btnSB {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/sb.png\')}
+div.payments_methods #btnPB {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/pb.png\')}
+div.payments_methods #btnMA {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/ma.png\')}
 
 h4.span.txt_h4 {font-weight: normal;}
 </style>
 <div style="width: 100%; text-align: left">
-<h4>Номер заказа: <span class="txt_h4"><? echo $orderNumber; ?></span></h4>
-<h4>Ваш логин в ...: <span class="txt_h4"><? echo $customerNumber; ?></span></h4>
-<h4>Сумма к оплате: <span class="txt_h4"><? echo number_format($out_sum, 2, ",", " ")." ".$currency; ?></span></h4>
+<h4>Номер заказа: <span class="txt_h4"><?php echo $orderNumber; ?></span></h4>
+<h4>Ваш логин в ...: <span class="txt_h4"><?php echo $customerNumber; ?></span></h4>
+<h4>Сумма к оплате: <span class="txt_h4"><?php echo number_format($out_sum, 2, ",", " ")." ".$currency; ?></span></h4>
 </div>
-<form method="POST" action="https://<? echo $ym_action_host; ?>/eshop.xml">
+<form method="POST" action="https://<?php echo $ym_action_host; ?>/eshop.xml">
 
-<?
+<?php
 $ym = new ps_yandex_money();
 echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, array() );
 ?>
 
 <div class="payments_methods">
-<? foreach( $paymentTypes as $ptKey => $ptName ) { ?>
-<button name="paymentType" value="<? echo $ptKey; ?>" type="submit" id="btn<? echo $ptKey; ?>" title="<? echo $ptName; ?>"></button>
-<? } ?>
+<?php foreach( $paymentTypes as $ptKey => $ptName ) { ?>
+<button name="paymentType" value="<?php echo $ptKey; ?>" type="submit" id="btn<?php echo $ptKey; ?>" title="<?php echo $ptName; ?>"></button>
+<?php } ?>
 </div>
 </form>
 ';
@@ -181,7 +214,7 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SHOPID; ?>:</strong></td>
 			<td>
-				<input type="text" name="YM_SHOPID" class="inputbox" value="<? if(YM_SHOPID != '') echo intval(YM_SHOPID); ?>" />
+				<input type="text" name="YM_SHOPID" class="inputbox" value="<?php if(YM_SHOPID != '') echo intval(YM_SHOPID); ?>" />
 			</td>
 		
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SHOPID_EXPLAIN; ?></td>
@@ -189,14 +222,14 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SCID; ?>:</strong></td>
 			<td>
-				<input type="text" name="YM_SCID" class="inputbox" value="<? if(YM_SCID != '') echo intval(YM_SCID); ?>" />
+				<input type="text" name="YM_SCID" class="inputbox" value="<?php if(YM_SCID != '') echo intval(YM_SCID); ?>" />
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SCID_EXPLAIN; ?></td>
 		</tr>
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SHOPPASSWORD; ?>:</strong></td>
 			<td>
-				<input type="text" name="YM_SHOPPASSWORD" class="inputbox" value="<? if(YM_SHOPPASSWORD != '') echo YM_SHOPPASSWORD; ?>" />
+				<input type="text" name="YM_SHOPPASSWORD" class="inputbox" value="<?php if(YM_SHOPPASSWORD != '') echo YM_SHOPPASSWORD; ?>" />
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SHOPPASSWORD_EXPLAIN; ?></td>
 		</tr>
@@ -207,45 +240,74 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_PC; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_PC" class="checkbox" value="1" <? if( intval(YM_PC) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_PC" class="checkbox" value="1" <?php if( intval(YM_PC) ) echo "checked=\"checked\" "; ?>/>
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_PC_EXPLAIN; ?></td>
 		</tr>
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_AC; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_AC" class="checkbox" value="1" <? if( intval(YM_AC) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_AC" class="checkbox" value="1" <?php if( intval(YM_AC) ) echo "checked=\"checked\" "; ?>/>
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_AC_EXPLAIN; ?></td>
 		</tr>
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_GP; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_GP" class="checkbox" value="1" <? if( intval(YM_GP) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_GP" class="checkbox" value="1" <?php if( intval(YM_GP) ) echo "checked=\"checked\" "; ?>/>
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_GP_EXPLAIN; ?></td>
 		</tr>
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_MC; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_MC" class="checkbox" value="1" <? if( intval(YM_MC) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_MC" class="checkbox" value="1" <?php if( intval(YM_MC) ) echo "checked=\"checked\" "; ?>/>
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_MC_EXPLAIN; ?></td>
 		</tr>
 		<tr>
-			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_NV; ?>:</strong></td>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_WM; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_NV" class="checkbox" value="1" <? if( intval(YM_NV) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_WM" class="checkbox" value="1" <?php if( intval(YM_WM) ) echo "checked=\"checked\" "; ?>/>
 			</td>
-			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_NV_EXPLAIN; ?></td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_WM_EXPLAIN; ?></td>
 		</tr>
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_AB; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_AB" class="checkbox" value="1" <?php if( intval(YM_AB) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_AB_EXPLAIN; ?></td>
+		</tr>
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SB; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_SB" class="checkbox" value="1" <?php if( intval(YM_SB) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_SB_EXPLAIN; ?></td>
+		</tr>
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_PB; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_PB" class="checkbox" value="1" <?php if( intval(YM_PB) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_PB_EXPLAIN; ?></td>
+		</tr>
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_MA; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_MA" class="checkbox" value="1" <?php if( intval(YM_MA) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_MA_EXPLAIN; ?></td>
+		</tr>
+		
 		<tr>
 			<td colspan=2><hr /></td>
 		</tr>
 		<tr>
 			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_DEBUG; ?>:</strong></td>
 			<td>
-				<input type="checkbox" name="YM_DEBUG" class="checkbox" value="1" <? if( intval(YM_DEBUG) ) echo "checked=\"checked\" "; ?>/>
+				<input type="checkbox" name="YM_DEBUG" class="checkbox" value="1" <?php if( intval(YM_DEBUG) ) echo "checked=\"checked\" "; ?>/>
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_DEBUG_EXPLAIN; ?></td>
 		</tr>
@@ -385,21 +447,21 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 		/** Check for empty values **/
 		if (is_array($d)) 
 		{
-			if(!$d['YM_SHOPID']) 
+			if(!isset($d['YM_SHOPID']))
 			{
 				$my_config_array['YM_SHOPID'] = '0';
 			} else {
 				$my_config_array['YM_SHOPID'] = $d['YM_SHOPID'];
 			}
 
-			if(!$d['YM_SCID']) 
+			if(!isset($d['YM_SCID']))
 			{
 				$my_config_array['YM_SCID'] = '0';
 			} else {
 				$my_config_array['YM_SCID'] = $d['YM_SCID'];
 			}
 
-			if(!$d['YM_SHOPPASSWORD']) 
+			if(!isset($d['YM_SHOPPASSWORD']))
 			{
 				$my_config_array['YM_SHOPPASSWORD'] = '';
 			} else {
@@ -441,28 +503,53 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 				$my_config_array['YM_MC'] ='1';
 			}
 
-			if(!isset($d['YM_NV']) || !$d['YM_NV']) 
+			if(!isset($d['YM_WM']) || !$d['YM_WM']) 
 			{
-				$my_config_array['YM_NV'] = '0';
+				$my_config_array['YM_WM'] = '0';
 			} else {
-				$my_config_array['YM_NV'] ='1';
+				$my_config_array['YM_WM'] ='1';
 			}
 
-			if ($d['YM_WAIT_STATUS']) 
+			if(!isset($d['YM_AB']) || !$d['YM_AB']) 
+			{
+				$my_config_array['YM_AB'] = '0';
+			} else {
+				$my_config_array['YM_AB'] ='1';
+			}
+			if(!isset($d['YM_SB']) || !$d['YM_SB']) 
+			{
+				$my_config_array['YM_SB'] = '0';
+			} else {
+				$my_config_array['YM_SB'] ='1';
+			}
+			if(!isset($d['YM_MA']) || !$d['YM_MA']) 
+			{
+				$my_config_array['YM_MA'] = '0';
+			} else {
+				$my_config_array['YM_MA'] ='1';
+			}
+			if(!isset($d['YM_PB']) || !$d['YM_PB']) 
+			{
+				$my_config_array['YM_PB'] = '0';
+			} else {
+				$my_config_array['YM_PB'] ='1';
+			}
+			
+			if (isset($d['YM_WAIT_STATUS']))
 			{
 				$my_config_array ['YM_WAIT_STATUS'] = $d['YM_WAIT_STATUS'];
 			} else {
 				$my_config_array ['YM_WAIT_STATUS'] = 'P';
 			}
 
-			if ($d['YM_CHECK_STATUS'])
+			if (isset($d['YM_CHECK_STATUS']))
 			{
 				$my_config_array ['YM_CHECK_STATUS'] = $d['YM_CHECK_STATUS'];
 			} else {
 				$my_config_array ['YM_CHECK_STATUS'] = 'W';
 			}
 
-			if ($d['YM_PAYMENT_STATUS']) 
+			if (isset($d['YM_PAYMENT_STATUS'])) 
 			{
 				$my_config_array ['YM_PAYMENT_STATUS'] = $d['YM_PAYMENT_STATUS'];
 			} else {
