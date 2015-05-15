@@ -90,6 +90,7 @@ class ps_yandex_money
 		{
 			$db->record[$db->row]->payment_extrainfo = '<?php
 // подключение класс для оплаты системой Яндекс.Деньги
+// Модуль версии 1.0.0
 
 require_once(CLASSPATH."payment/ps_yandex_money.php");
 $host = getenv("HTTP_HOST");
