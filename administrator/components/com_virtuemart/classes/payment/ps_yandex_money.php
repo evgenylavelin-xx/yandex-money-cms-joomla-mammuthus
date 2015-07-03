@@ -89,8 +89,10 @@ class ps_yandex_money
 		if(htmlspecialchars( $db->sf("payment_extrainfo")) == '' ) 
 		{
 			$db->record[$db->row]->payment_extrainfo = '<?php
-// подключение класс для оплаты системой Яндекс.Деньги
-// Модуль версии 1.0.0
+// Класс для оплаты через сервис Яндекс.Касса
+// Модуль версии 1.1.0
+// Лицензионный договор.
+// Любое использование Вами программы означает полное и безоговорочное принятие Вами условий лицензионного договора, размещенного по адресу https://money.yandex.ru/doc.xml?id=527132 (далее – «Лицензионный договор»). Если Вы не принимаете условия Лицензионного договора в полном объёме, Вы не имеете права использовать программу в каких-либо целях.
 
 require_once(CLASSPATH."payment/ps_yandex_money.php");
 $host = getenv("HTTP_HOST");
@@ -576,7 +578,7 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 		{
 			fputs($fp, stripslashes($config));
 			fclose($fp);
-			
+			new yamoney_statistics();
 			return true;
 		}
 		else return false;
@@ -655,4 +657,72 @@ YMEOF;
 		return true;
 	}
 }
+class yamoney_statistics {
+	public function __construct(){
+		$this->send();
+	}
 
+	private function send()
+	{
+		$headers = array();
+		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+		$user = JFactory::getUser();
+		$array = array(
+			'url' => JURI::base(),
+			'cms' => 'joomla',
+			'version' => JVERSION,
+			'ver_mod' => '1.1.0',
+			'yacms' => false,
+			'email' => $user->email,
+			'shopid' => YM_SHOPID,
+			'settings' => array(
+				'kassa' => true
+			)
+		);
+
+		$key_crypt = gethostbyname($_SERVER['HTTP_HOST']);
+		$array_crypt = $this->crypt_encrypt($array, $key_crypt);
+
+		$url = 'https://statcms.yamoney.ru/';
+		$curlOpt = array(
+			CURLOPT_HEADER => false,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_SSL_VERIFYHOST => false,
+			CURLINFO_HEADER_OUT => true,
+			CURLOPT_POST => true,
+		);
+
+		$curlOpt[CURLOPT_HTTPHEADER] = $headers;
+		$curlOpt[CURLOPT_POSTFIELDS] = http_build_query(array('data' => $array_crypt));
+
+		$curl = curl_init($url);
+		curl_setopt_array($curl, $curlOpt);
+		$rbody = curl_exec($curl);
+		$errno = curl_errno($curl);
+		$error = curl_error($curl);
+		$rcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+	}
+	
+	private function crypt_encrypt($data, $key)
+	{
+		$key = hash('sha256', $key, true);
+		$data = serialize($data);
+		$init_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+		$init_vect = mcrypt_create_iv($init_size, MCRYPT_RAND);
+		$str = $this->randomString(strlen($key)).$init_vect.mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $data, MCRYPT_MODE_CBC, $init_vect);
+		return base64_encode($str);
+	}
+
+	private function randomString($len)
+	{
+		$str = '';
+		$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$pool_len = strlen($pool);
+		for ($i = 0; $i < $len; $i++) {
+			$str .= substr($pool, mt_rand(0, $pool_len - 1), 1);
+		}
+		return $str;
+	}
+}
