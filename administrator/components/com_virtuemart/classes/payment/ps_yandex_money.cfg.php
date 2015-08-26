@@ -24,4 +24,6 @@ define ('YM_AB', '1');
 define ('YM_SB', '1');
 define ('YM_PB', '1');
 define ('YM_MA', '1');
+define ('YM_QW', '1');
+define ('YM_QP', '1');
 ?>

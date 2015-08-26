@@ -50,7 +50,12 @@ class yandex_money_language
 	
 	var $PHPSHOP_ADMIN_CFG_YM_PB = "Интернет-банк Промсвязьбанка";
 	var $PHPSHOP_ADMIN_CFG_YM_PB_EXPLAIN = "Оплата через интернет-банк Промсвязьбанка.";
-		
+	
+	var $PHPSHOP_ADMIN_CFG_YM_QW = "QIWI Wallet";
+	var $PHPSHOP_ADMIN_CFG_YM_QW_EXPLAIN = "Оплата через QIWI Wallet.";	
+	
+	var $PHPSHOP_ADMIN_CFG_YM_QP = "Куппи.ру";
+	var $PHPSHOP_ADMIN_CFG_YM_QP_EXPLAIN = "Оплата через Куппи.ру";
 
 	var $PHPSHOP_YM_ORDER_STATUS_WAIT_SET = "Пользователь сделал заказ, но ещё не оплатил. Заказу присвоен статус &laquo;в обработке&raquo;.";
 	var $PHPSHOP_ADMIN_CFG_YM_WAIT_STATUS = "Статус готов к оплате";
@@ -90,7 +95,7 @@ class ps_yandex_money
 		{
 			$db->record[$db->row]->payment_extrainfo = '<?php
 // Класс для оплаты через сервис Яндекс.Касса
-// Модуль версии 1.1.0
+// Модуль версии 1.2.0
 // Лицензионный договор.
 // Любое использование Вами программы означает полное и безоговорочное принятие Вами условий лицензионного договора, размещенного по адресу https://money.yandex.ru/doc.xml?id=527132 (далее – «Лицензионный договор»). Если Вы не принимаете условия Лицензионного договора в полном объёме, Вы не имеете права использовать программу в каких-либо целях.
 
@@ -155,6 +160,14 @@ if ( intval(YM_MA) )
 {
 	$paymentTypes["MA"] = "Оплатить через MasterPass.";
 }
+if ( intval(YM_QW) )
+{
+	$paymentTypes["QW"] = "Оплатить через QIWI Wallet.";
+}
+if ( intval(YM_QP) )
+{
+	$paymentTypes["QP"] = "Оплатить через Куппи.ру.";
+}
 ?>
 
 <style type="text/css">
@@ -179,6 +192,8 @@ div.payments_methods #btnAB {background-image:url(\'http://<?php echo $host; ?>/
 div.payments_methods #btnSB {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/sb.png\')}
 div.payments_methods #btnPB {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/pb.png\')}
 div.payments_methods #btnMA {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/ma.png\')}
+div.payments_methods #btnQW {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/qw.png\')}
+div.payments_methods #btnQP {background-image:url(\'http://<?php echo $host; ?>/images/yamoney/qp.png\')}
 
 h4.span.txt_h4 {font-weight: normal;}
 </style>
@@ -303,7 +318,20 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 			</td>
 			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_MA_EXPLAIN; ?></td>
 		</tr>
-		
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_QW; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_QW" class="checkbox" value="1" <?php if( intval(YM_QW) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_QW_EXPLAIN; ?></td>
+		</tr>
+		<tr>
+			<td><strong><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_QP; ?>:</strong></td>
+			<td>
+				<input type="checkbox" name="YM_QP" class="checkbox" value="1" <?php if( intval(YM_QP) ) echo "checked=\"checked\" "; ?>/>
+			</td>
+			<td><?php echo $VM_LANG->PHPSHOP_ADMIN_CFG_YM_QP_EXPLAIN; ?></td>
+		</tr>
 		<tr>
 			<td colspan=2><hr /></td>
 		</tr>
@@ -478,65 +506,8 @@ echo $ym->get_ym_params_block($host, $out_sum, $customerNumber, $orderNumber, ar
 				$my_config_array['YM_DEBUG'] ='1';
 			}
 
-			if(!isset($d['YM_PC']) || !$d['YM_PC']) 
-			{
-				$my_config_array['YM_PC'] = '0';
-			} else {
-				$my_config_array['YM_PC'] ='1';
-			}
-
-			if(!isset($d['YM_AC']) || !$d['YM_AC']) 
-			{
-				$my_config_array['YM_AC'] = '0';
-			} else {
-				$my_config_array['YM_AC'] ='1';
-			}
-
-			if(!isset($d['YM_GP']) || !$d['YM_GP']) 
-			{
-				$my_config_array['YM_GP'] = '0';
-			} else {
-				$my_config_array['YM_GP'] ='1';
-			}
-
-			if(!isset($d['YM_MC']) || !$d['YM_MC']) 
-			{
-				$my_config_array['YM_MC'] = '0';
-			} else {
-				$my_config_array['YM_MC'] ='1';
-			}
-
-			if(!isset($d['YM_WM']) || !$d['YM_WM']) 
-			{
-				$my_config_array['YM_WM'] = '0';
-			} else {
-				$my_config_array['YM_WM'] ='1';
-			}
-
-			if(!isset($d['YM_AB']) || !$d['YM_AB']) 
-			{
-				$my_config_array['YM_AB'] = '0';
-			} else {
-				$my_config_array['YM_AB'] ='1';
-			}
-			if(!isset($d['YM_SB']) || !$d['YM_SB']) 
-			{
-				$my_config_array['YM_SB'] = '0';
-			} else {
-				$my_config_array['YM_SB'] ='1';
-			}
-			if(!isset($d['YM_MA']) || !$d['YM_MA']) 
-			{
-				$my_config_array['YM_MA'] = '0';
-			} else {
-				$my_config_array['YM_MA'] ='1';
-			}
-			if(!isset($d['YM_PB']) || !$d['YM_PB']) 
-			{
-				$my_config_array['YM_PB'] = '0';
-			} else {
-				$my_config_array['YM_PB'] ='1';
-			}
+			$list=array('PC','AC','GC','MC','WM','AB','SB','MA','PB','QW', 'QP');
+			foreach ($list as $item) $my_config_array['YM_'.$item] =(isset($d['YM_'.$item]) && $d['YM_'.$item])?'1':'0';
 			
 			if (isset($d['YM_WAIT_STATUS']))
 			{

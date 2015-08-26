@@ -276,8 +276,8 @@ if(isset($_REQUEST['action']))
 				$error=1;
 			}
 		} else {
-			//Отвечаем серверу Яндекс.Денег, кодом 666 - Да, такой ошибки скорее всего нет, ну и ладно. Платеж то все-равно не прошел. Ну и хрен с ним.
-			$rezult=answer($ym_action,$ym_shopID,$order_invoice,666); 
+			//
+			$rezult=answer($ym_action,$ym_shopID,$order_invoice, 200); 
 			$error=1;
 		}
 	}
